@@ -13,19 +13,17 @@ export function Navbar() {
 
       {user ? (
         <div>
+          <span>{user.name}</span>
+
           <Link href="/profile">Profile</Link>
 
-          <button onClick={logout}>
-            Sign Out
-          </button>
+          <button onClick={logout}>Sign Out</button>
         </div>
       ) : (
         <div>
           <Link href="/login">Login</Link>
 
-          <Link href="/register">
-            Register
-          </Link>
+          <Link href="/register">Register</Link>
         </div>
       )}
     </nav>
