@@ -1,5 +1,6 @@
 "use client";
 
+import { useState } from "react";
 import Link from "next/link";
 
 import { useAuth } from "@/hooks/useAuth";
@@ -7,23 +8,78 @@ import { useAuth } from "@/hooks/useAuth";
 export function Navbar() {
   const { user, logout } = useAuth();
 
+  const [menuOpen, setMenuOpen] = useState(false);
+
   return (
     <nav>
-      <h1>Instagram Clone</h1>
+      <div>
+        <h1>
+          Instagram Clone
+        </h1>
 
-      {user ? (
-        <div>
-          <span>{user.name}</span>
+        <button
+          aria-label="Toggle menu"
+          onClick={() =>
+            setMenuOpen(!menuOpen)
+          }
+        >
+          ☰
+        </button>
+      </div>
 
-          <Link href="/profile">Profile</Link>
 
-          <button onClick={logout}>Sign Out</button>
-        </div>
-      ) : (
-        <div>
-          <Link href="/login">Login</Link>
+      <div>
+        {user ? (
+          <>
+            <span>
+              {user.name}
+            </span>
 
-          <Link href="/register">Register</Link>
+            <Link href="/profile">
+              Profile
+            </Link>
+
+            <button onClick={logout}>
+              Sign Out
+            </button>
+          </>
+        ) : (
+          <>
+            <Link href="/login">
+              Login
+            </Link>
+
+            <Link href="/register">
+              Register
+            </Link>
+          </>
+        )}
+      </div>
+
+
+      {menuOpen && (
+        <div aria-label="Mobile Menu">
+          {user ? (
+            <>
+              <Link href="/profile">
+                Profile
+              </Link>
+
+              <button onClick={logout}>
+                Sign Out
+              </button>
+            </>
+          ) : (
+            <>
+              <Link href="/login">
+                Login
+              </Link>
+
+              <Link href="/register">
+                Register
+              </Link>
+            </>
+          )}
         </div>
       )}
     </nav>

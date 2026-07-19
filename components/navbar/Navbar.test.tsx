@@ -10,11 +10,7 @@ function LoggedInNavbar() {
 
   return (
     <>
-      <button
-        onClick={() =>
-          login("cliff@example.com", "password")
-        }
-      >
+      <button onClick={() => login("cliff@example.com", "password")}>
         Trigger Login
       </button>
 
@@ -70,101 +66,156 @@ it("does not show authenticated links when logged out", () => {
 it("shows authenticated links when logged in", async () => {
   const user = userEvent.setup();
 
-  renderWithProviders(
-    <LoggedInNavbar />
-  );
+  renderWithProviders(<LoggedInNavbar />);
 
   await user.click(
     screen.getByRole("button", {
       name: /trigger login/i,
-    })
+    }),
   );
 
   expect(
     screen.getByRole("link", {
       name: /profile/i,
-    })
+    }),
   ).toBeInTheDocument();
 
   expect(
     screen.getByRole("button", {
       name: /sign out/i,
-    })
+    }),
   ).toBeInTheDocument();
 });
 
 it("hides login and register after authentication", async () => {
   const user = userEvent.setup();
 
-  renderWithProviders(
-    <LoggedInNavbar />
-  );
+  renderWithProviders(<LoggedInNavbar />);
 
   await user.click(
     screen.getByRole("button", {
       name: /trigger login/i,
-    })
+    }),
   );
 
   expect(
     screen.queryByRole("link", {
       name: /login/i,
-    })
+    }),
   ).not.toBeInTheDocument();
 
   expect(
     screen.queryByRole("link", {
       name: /register/i,
-    })
+    }),
   ).not.toBeInTheDocument();
 });
 
 it("shows the logged in user's name", async () => {
   const user = userEvent.setup();
 
-  renderWithProviders(
-    <LoggedInNavbar />
-  );
+  renderWithProviders(<LoggedInNavbar />);
 
   await user.click(
     screen.getByRole("button", {
       name: /trigger login/i,
-    })
+    }),
   );
 
-  expect(
-    screen.getByText("cliff")
-  ).toBeInTheDocument();
+  expect(screen.getByText("cliff")).toBeInTheDocument();
 });
 
 it("signs the user out and returns to logged out state", async () => {
   const user = userEvent.setup();
 
-  renderWithProviders(
-    <LoggedInNavbar />
-  );
+  renderWithProviders(<LoggedInNavbar />);
 
   await user.click(
     screen.getByRole("button", {
       name: /trigger login/i,
-    })
+    }),
   );
 
   await user.click(
     screen.getByRole("button", {
       name: /sign out/i,
-    })
+    }),
   );
 
   expect(
     screen.getByRole("link", {
       name: /login/i,
-    })
+    }),
   ).toBeInTheDocument();
 
   expect(
     screen.queryByRole("link", {
       name: /profile/i,
+    }),
+  ).not.toBeInTheDocument();
+});
+
+it("renders hamburger menu button", () => {
+  renderWithProviders(<Navbar />);
+
+  expect(
+    screen.getByRole("button", {
+      name: /toggle menu/i,
+    }),
+  ).toBeInTheDocument();
+});
+
+it("does not show mobile menu initially", () => {
+  renderWithProviders(<Navbar />);
+
+  expect(screen.queryByLabelText("Mobile Menu")).not.toBeInTheDocument();
+});
+
+it("opens mobile menu when hamburger is clicked", async () => {
+  const user = userEvent.setup();
+
+  renderWithProviders(
+    <Navbar />
+  );
+
+
+  await user.click(
+    screen.getByRole("button", {
+      name: /toggle menu/i,
     })
+  );
+
+
+  expect(
+    screen.getByLabelText("Mobile Menu")
+  ).toBeInTheDocument();
+});
+
+it("closes mobile menu when hamburger is clicked again", async () => {
+  const user = userEvent.setup();
+
+  renderWithProviders(
+    <Navbar />
+  );
+
+
+  const button =
+    screen.getByRole("button", {
+      name: /toggle menu/i,
+    });
+
+
+  await user.click(button);
+
+  expect(
+    screen.getByLabelText("Mobile Menu")
+  ).toBeInTheDocument();
+
+
+  await user.click(button);
+
+
+  expect(
+    screen.queryByLabelText("Mobile Menu")
   ).not.toBeInTheDocument();
 });
