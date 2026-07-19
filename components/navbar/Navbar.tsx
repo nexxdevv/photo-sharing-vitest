@@ -1,85 +1,34 @@
 "use client";
 
 import { useState } from "react";
-import Link from "next/link";
 
-import { useAuth } from "@/hooks/useAuth";
+import { Logo } from "./Logo";
+import { NavLinks } from "./NavLinks";
 
 export function Navbar() {
-  const { user, logout } = useAuth();
-
   const [menuOpen, setMenuOpen] = useState(false);
+
+  function closeMenu() {
+    setMenuOpen(false);
+  }
 
   return (
     <nav>
       <div>
-        <h1>
-          Instagram Clone
-        </h1>
+        <Logo />
 
-        <button
-          aria-label="Toggle menu"
-          onClick={() =>
-            setMenuOpen(!menuOpen)
-          }
-        >
+        <button aria-label="Toggle menu" onClick={() => setMenuOpen(!menuOpen)}>
           ☰
         </button>
       </div>
 
-
       <div>
-        {user ? (
-          <>
-            <span>
-              {user.name}
-            </span>
-
-            <Link href="/profile">
-              Profile
-            </Link>
-
-            <button onClick={logout}>
-              Sign Out
-            </button>
-          </>
-        ) : (
-          <>
-            <Link href="/login">
-              Login
-            </Link>
-
-            <Link href="/register">
-              Register
-            </Link>
-          </>
-        )}
+        <NavLinks />
       </div>
-
 
       {menuOpen && (
         <div aria-label="Mobile Menu">
-          {user ? (
-            <>
-              <Link href="/profile">
-                Profile
-              </Link>
-
-              <button onClick={logout}>
-                Sign Out
-              </button>
-            </>
-          ) : (
-            <>
-              <Link href="/login">
-                Login
-              </Link>
-
-              <Link href="/register">
-                Register
-              </Link>
-            </>
-          )}
+          <NavLinks onNavigate={closeMenu} />
         </div>
       )}
     </nav>
