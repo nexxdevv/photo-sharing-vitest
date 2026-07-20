@@ -3,6 +3,7 @@
 import {
   createContext,
   useContext,
+  useEffect,
   useMemo,
   useState,
   ReactNode,
@@ -15,11 +16,7 @@ interface AuthContextType {
 
   login: (email: string, password: string) => void;
 
-  register: (
-    name: string,
-    email: string,
-    password: string
-  ) => void;
+  register: (name: string, email: string, password: string) => void;
 
   logout: () => void;
 }
@@ -33,24 +30,45 @@ interface Props {
 export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
 
-  function login(email: string) {
-    setUser({
+  // Restore user on page load
+  useEffect(() => {
+    const storedUser = localStorage.getItem("instagram-user");
+
+    if (storedUser) {
+      setUser(JSON.parse(storedUser));
+    }
+  }, []);
+
+  function saveUser(newUser: User) {
+    setUser(newUser);
+
+    localStorage.setItem("instagram-user", JSON.stringify(newUser));
+  }
+
+  function login(email: string, password: string) {
+    const newUser = {
       id: crypto.randomUUID(),
       name: email.split("@")[0],
       email,
-    });
+    };
+
+    saveUser(newUser);
   }
 
-  function register(name: string, email: string) {
-    setUser({
+  function register(name: string, email: string, password: string) {
+    const newUser = {
       id: crypto.randomUUID(),
       name,
       email,
-    });
+    };
+
+    saveUser(newUser);
   }
 
   function logout() {
     setUser(null);
+
+    localStorage.removeItem("instagram-user");
   }
 
   const value = useMemo(
@@ -60,23 +78,17 @@ export function AuthProvider({ children }: Props) {
       register,
       logout,
     }),
-    [user]
+    [user],
   );
 
-  return (
-    <AuthContext.Provider value={value}>
-      {children}
-    </AuthContext.Provider>
-  );
+  return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
 }
 
 export function useAuthContext() {
   const context = useContext(AuthContext);
 
   if (!context) {
-    throw new Error(
-      "useAuth must be used inside AuthProvider"
-    );
+    throw new Error("useAuth must be used inside AuthProvider");
   }
 
   return context;
