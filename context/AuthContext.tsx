@@ -14,6 +14,8 @@ import { User } from "@/types/auth";
 interface AuthContextType {
   user: User | null;
 
+  loading: boolean;
+
   login: (email: string, password: string) => void;
 
   register: (name: string, email: string, password: string) => void;
@@ -29,6 +31,7 @@ interface Props {
 
 export function AuthProvider({ children }: Props) {
   const [user, setUser] = useState<User | null>(null);
+  const [loading, setLoading] = useState(true);
 
   // Restore user on page load
   useEffect(() => {
@@ -37,6 +40,8 @@ export function AuthProvider({ children }: Props) {
     if (storedUser) {
       setUser(JSON.parse(storedUser));
     }
+
+    setLoading(false);
   }, []);
 
   function saveUser(newUser: User) {
@@ -77,8 +82,9 @@ export function AuthProvider({ children }: Props) {
       login,
       register,
       logout,
+      loading,
     }),
-    [user],
+    [user, loading],
   );
 
   return <AuthContext.Provider value={value}>{children}</AuthContext.Provider>;
