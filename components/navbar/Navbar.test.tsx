@@ -24,10 +24,10 @@ describe("Navbar", () => {
     renderWithProviders(<Navbar />);
 
     expect(
-      screen.getByRole("heading", {
+      screen.getByRole("link", {
         name: /instagram clone/i,
       }),
-    ).toBeInTheDocument();
+    ).toHaveAttribute("href", "/");
   });
 });
 
@@ -174,48 +174,31 @@ it("does not show mobile menu initially", () => {
 it("opens mobile menu when hamburger is clicked", async () => {
   const user = userEvent.setup();
 
-  renderWithProviders(
-    <Navbar />
-  );
-
+  renderWithProviders(<Navbar />);
 
   await user.click(
     screen.getByRole("button", {
       name: /toggle menu/i,
-    })
+    }),
   );
 
-
-  expect(
-    screen.getByLabelText("Mobile Menu")
-  ).toBeInTheDocument();
+  expect(screen.getByLabelText("Mobile Menu")).toBeInTheDocument();
 });
 
 it("closes mobile menu when hamburger is clicked again", async () => {
   const user = userEvent.setup();
 
-  renderWithProviders(
-    <Navbar />
-  );
+  renderWithProviders(<Navbar />);
 
-
-  const button =
-    screen.getByRole("button", {
-      name: /toggle menu/i,
-    });
-
+  const button = screen.getByRole("button", {
+    name: /toggle menu/i,
+  });
 
   await user.click(button);
 
-  expect(
-    screen.getByLabelText("Mobile Menu")
-  ).toBeInTheDocument();
-
+  expect(screen.getByLabelText("Mobile Menu")).toBeInTheDocument();
 
   await user.click(button);
 
-
-  expect(
-    screen.queryByLabelText("Mobile Menu")
-  ).not.toBeInTheDocument();
+  expect(screen.queryByLabelText("Mobile Menu")).not.toBeInTheDocument();
 });
